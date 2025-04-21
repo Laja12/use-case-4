@@ -1,4 +1,4 @@
-name: use-case-5
+name: use-case-6
 
 on:
   workflow_dispatch:

@@ -1,0 +1,51 @@
+name: use-case-5
+
+on:
+  workflow_dispatch:
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::838365449755:role/opend-id-connect
+          aws-region: us-east-1  
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.0.0 
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.0.0 
+          
+      - name: Install TFLint
+        run: |
+          curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
+ 
+      - name: Terraform Lint
+        run: tflint
+
+      - name: Install Checkov
+        run: pip install checkov
+
+      - name: Run Checkov with soft fail
+        run: checkov --directory . --soft-fail
+
+      - name: Initialize Terraform
+        run: terraform init
+
+      - name: Apply Terraform plan
+        run: terraform apply -auto-approve
